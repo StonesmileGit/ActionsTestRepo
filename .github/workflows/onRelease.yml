@@ -51,7 +51,7 @@ jobs:
 
       - name: Update changelog file
         run: |
-          python ./BuildTools/processChangeLog.py ${{ github.event.release.tag_name }} "${{ github.event.release.body }}" ${GITHUB_WORKSPACE}/GameData/RP-0/changelog.cfg
+          python ./${GITHUB_WORKSPACE}/BuildTools/processChangeLog.py ${{ github.event.release.tag_name }} "${{ github.event.release.body }}" ${GITHUB_WORKSPACE}/GameData/RP-0/changelog.cfg
           
       - name: Setup git config
         run: |
