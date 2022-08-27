@@ -47,11 +47,11 @@ jobs:
         uses: actions/checkout@v2
         with:
           repository: StonesmileGit/BuildTools
-          path: '${GITHUB_WORKSPACE}/BuildTools'
+          path: './BuildTools'
 
       - name: Update changelog file
         run: |
-          python ${GITHUB_WORKSPACE}/BuildTools/processChangeLog.py ${{ github.event.release.tag_name }} "${{ github.event.release.body }}" ${GITHUB_WORKSPACE}/GameData/RP-0/changelog.cfg
+          python ./BuildTools/processChangeLog.py ${{ github.event.release.tag_name }} "${{ github.event.release.body }}" ${GITHUB_WORKSPACE}/GameData/RP-0/changelog.cfg
           
       - name: Setup git config
         run: |
