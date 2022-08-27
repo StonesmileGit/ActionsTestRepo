@@ -1,0 +1,74 @@
+name: "On Release"
+
+# Controls when the action will run. 
+on:
+  release:
+    types: [published]
+    
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  attach-release-artifacts:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+          
+      - name: Get Branch
+        shell: bash
+        run: |
+          releaseBranch=${{ github.event.release.target_commitish }}
+          echo "Found branch ${releaseBranch}"
+          echo "tagged_branch=${releaseBranch}" >> $GITHUB_ENV
+        
+      - name: Get version
+        env:
+          TAG_STRING: ${{ github.event.release.tag_name }}
+        run: |
+          VFULL="$(echo $TAG_STRING | sed -e s/v//)"
+          VMAJOR="$(echo $VFULL | cut -f 1 -d '.')"
+          VMINOR="$(echo $VFULL | cut -f 2 -d '.')"
+          VPATCH="$(echo $VFULL | cut -f 3 -d '.')"
+          VBUILD="$(echo $VFULL | cut -f 4 -d '.')"
+          
+          echo "Version string: $TAG_STRING"
+          echo "Version is $VMAJOR dot $VMINOR dot $VPATCH dot $VBUILD"
+
+      - name: Setup python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.0
+          
+      - name: Checkout tools
+        uses: actions/checkout@v2
+        with:
+          repository: StonesmileGit/BuildTools
+          path: '${GITHUB_WORKSPACE}/BuildTools'
+
+      - name: Update changelog file
+        run: |
+          python ${GITHUB_WORKSPACE}/BuildTools/processChangeLog.py ${{ github.event.release.tag_name }} "${{ github.event.release.body }}" ${GITHUB_WORKSPACE}/GameData/RP-0/changelog.cfg
+          
+      - name: Setup git config
+        run: |
+          git config user.name "GitHub Actions Bot"
+          git config user.email "<>"
+          
+      - name: Commit changes
+        shell: bash
+        env:
+          TAG_STRING: ${{ github.event.release.tag_name }}
+        run: |
+          RELEASEBRANCH=${{ env.tagged_branch }}
+          echo "Checking out branch ${RELEASEBRANCH}"
+          git checkout $RELEASEBRANCH
+          cp -v ${GITHUB_WORKSPACE}/GameData/RP-0/changelog.cfg ${GITHUB_WORKSPACE}/GameData/RP-0/changelog_new.cfg
+          git reset --hard origin/$RELEASEBRANCH
+          cp -v ${GITHUB_WORKSPACE}/GameData/RP-0/changelog_new.cfg ${GITHUB_WORKSPACE}/GameData/RP-0/changelog.cfg
+          git add "${GITHUB_WORKSPACE}/GameData/RP-0/changelog.cfg"
+          git commit -m "Update version to $TAG_STRING"
+          git push origin $RELEASEBRANCH
