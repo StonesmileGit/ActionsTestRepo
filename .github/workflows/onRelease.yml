@@ -47,7 +47,7 @@ jobs:
         uses: actions/checkout@v2
         with:
           repository: StonesmileGit/BuildTools
-          path: 'BuildTools'
+          path: BuildTools
 
       - name: Update changelog file
         run: |
