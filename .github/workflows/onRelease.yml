@@ -39,7 +39,7 @@ jobs:
           echo "Version is $VMAJOR dot $VMINOR dot $VPATCH dot $VBUILD"
 
       - name: Update changelog file
-        uses: StonesmileGit/BuildTools/process-changelog@master
+        uses: StonesmileGit/BuildTools/process-changelog@main
         with:
           tag: ${{ github.event.release.tag_name }}
           body: "${{ github.event.release.body }}"
