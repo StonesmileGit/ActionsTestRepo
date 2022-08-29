@@ -38,20 +38,12 @@ jobs:
           echo "Version string: $TAG_STRING"
           echo "Version is $VMAJOR dot $VMINOR dot $VPATCH dot $VBUILD"
 
-      - name: Setup python
-        uses: actions/setup-python@v2
-        with:
-          python-version: 3.0
-          
-      - name: Checkout tools
-        uses: actions/checkout@v2
-        with:
-          repository: StonesmileGit/BuildTools
-          path: BuildTools
-
       - name: Update changelog file
-        run: |
-          python ./BuildTools/processChangeLog.py ${{ github.event.release.tag_name }} "${{ github.event.release.body }}" ${GITHUB_WORKSPACE}/GameData/RP-0/changelog.cfg
+        uses: StonesmileGit/BuildTools/process-changelog@master
+          with:
+            tag: ${{ github.event.release.tag_name }}
+            body: "${{ github.event.release.body }}"
+            path: ${GITHUB_WORKSPACE}/GameData/RP-0/changelog.cfg
           
       - name: Setup git config
         run: |
@@ -66,9 +58,6 @@ jobs:
           RELEASEBRANCH=${{ env.tagged_branch }}
           echo "Checking out branch ${RELEASEBRANCH}"
           git checkout $RELEASEBRANCH
-          cp -v ${GITHUB_WORKSPACE}/GameData/RP-0/changelog.cfg ${GITHUB_WORKSPACE}/GameData/RP-0/changelog_new.cfg
-          git reset --hard origin/$RELEASEBRANCH
-          cp -v ${GITHUB_WORKSPACE}/GameData/RP-0/changelog_new.cfg ${GITHUB_WORKSPACE}/GameData/RP-0/changelog.cfg
           git add "${GITHUB_WORKSPACE}/GameData/RP-0/changelog.cfg"
           git commit -m "Update version to $TAG_STRING"
           git push origin $RELEASEBRANCH
