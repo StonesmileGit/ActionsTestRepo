@@ -11,9 +11,9 @@ on:
 jobs:
   print-version:
     runs-on: ubuntu-latest
-    shell: bash
     steps:
       - name: Print Version
+        shell: bash
         run: |
           VERSION=$(git describe --tags --abbrev=0)
           VMAJOR="$(echo $VERSION | cut -f 1 -d '.')"
