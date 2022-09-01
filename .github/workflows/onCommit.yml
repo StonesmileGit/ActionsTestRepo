@@ -1,0 +1,25 @@
+# This is a basic workflow to help you get started with Actions
+
+name: build
+
+# Controls when the action will run.
+on:
+  # Triggers the workflow on push or pull request events but only for the master branch
+  push:
+    branches: [ main ]
+
+jobs:
+  print-version:
+    runs-on: ubuntu-latest
+    shell: bash
+    steps:
+      - name: Print Version
+        run: |
+          VERSION=$(git describe --tags --abbrev=0)
+          VMAJOR="$(echo $VERSION | cut -f 1 -d '.')"
+          VMINOR="$(echo $VERSION | cut -f 2 -d '.')"
+          VPATCH="$(echo $VERSION | cut -f 3 -d '.')"
+          VBUILD="$(git rev-list $VERSION.. --count)"
+          BVERSION="$VMAJOR.$VMINOR.$VPATCH.$VBUILD"
+
+          echo "Version is: $BVERSION"
