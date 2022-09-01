@@ -69,4 +69,4 @@ jobs:
           git commit -m "Update version to $TAG_STRING"
           git tag --force $TAG_STRING $RELEASEBRANCH
           git push origin $RELEASEBRANCH
-          git push origin $TAG_STRING
+          git push origin $TAG_STRING --force
