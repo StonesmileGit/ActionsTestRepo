@@ -28,19 +28,3 @@ jobs:
           BVERSION="$VMAJOR.$VMINOR.$VPATCH.$VBUILD"
 
           echo "Version is: $BVERSION"
-
-      - name: make git change
-        shell: bash
-        run: touch test.txt
-
-  next-job:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-        with:
-          fetch-depth: 0
-
-      - name: git status
-        shell: bash
-        run: git status
