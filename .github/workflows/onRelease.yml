@@ -20,18 +20,19 @@ jobs:
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-        with:
-          fetch-depth: 0
-          
       - name: Get Branch
         shell: bash
         run: |
           releaseBranch=${{ github.event.release.target_commitish }}
           echo "Found branch ${releaseBranch}"
           echo "tagged_branch=${releaseBranch}" >> $GITHUB_ENV
-        
+
+      - name: Checkout found branch
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+          ref: ${{ env.tagged_branch }}
+
       - name: Get version
         env:
           TAG_STRING: ${{ github.event.release.tag_name }}
@@ -41,7 +42,7 @@ jobs:
           VMINOR="$(echo $VFULL | cut -f 2 -d '.')"
           VPATCH="$(echo $VFULL | cut -f 3 -d '.')"
           VBUILD="$(echo $VFULL | cut -f 4 -d '.')"
-          
+
           echo "Version string: $TAG_STRING"
           echo "Version is $VMAJOR dot $VMINOR dot $VPATCH dot $VBUILD"
 
@@ -51,22 +52,27 @@ jobs:
           tag: ${{ github.event.release.tag_name }}
           body: "${{ github.event.release.body }}"
           path: ${GITHUB_WORKSPACE}/GameData/RP-0/changelog.cfg
-          
+
+      - name: Update version file
+        uses: StonesmileGit/BuildTools/update-version-file@main
+        with:
+          tag: ${{ github.event.release.tag_name }}
+          path: ${GITHUB_WORKSPACE}/GameData/RP-0/RP-1.version
+
       - name: Setup git config
         run: |
           git config user.name "GitHub Actions Bot"
           git config user.email "<>"
-          
+
       - name: Commit changes
         shell: bash
         env:
           TAG_STRING: ${{ github.event.release.tag_name }}
         run: |
           RELEASEBRANCH=${{ env.tagged_branch }}
-          echo "Checking out branch ${RELEASEBRANCH}"
-          git checkout $RELEASEBRANCH
           git add "${GITHUB_WORKSPACE}/GameData/RP-0/changelog.cfg"
+          git add "${GITHUB_WORKSPACE}/GameData/RP-0/RP-1.version"
           git commit -m "Update version to $TAG_STRING"
-          git tag --force $TAG_STRING $RELEASEBRANCH
           git push origin $RELEASEBRANCH
+          git tag $TAG_STRING $RELEASEBRANCH --force
           git push origin $TAG_STRING --force
