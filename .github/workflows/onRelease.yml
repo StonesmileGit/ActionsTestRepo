@@ -8,7 +8,7 @@ on:
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   check-secret:
-    uses: StonesmileGit/BuildTools/.github/workflows/check-secret.yml@main
+    uses: KSP-RO/BuildTools/.github/workflows/check-secret.yml@master
     secrets:
       KSP_ZIP_PASSWORD: ${{ secrets.KSP_ZIP_PASSWORD }}
 
@@ -47,14 +47,14 @@ jobs:
           echo "Version is $VMAJOR dot $VMINOR dot $VPATCH dot $VBUILD"
 
       - name: Update changelog file
-        uses: StonesmileGit/BuildTools/process-changelog@main
+        uses: KSP-RO/BuildTools/process-changelog@master
         with:
           tag: ${{ github.event.release.tag_name }}
           body: "${{ github.event.release.body }}"
           path: ${GITHUB_WORKSPACE}/GameData/RP-0/changelog.cfg
 
       - name: Update version file
-        uses: StonesmileGit/BuildTools/update-version-file@main
+        uses: KSP-RO/BuildTools/update-version-file@master
         with:
           tag: ${{ github.event.release.tag_name }}
           path: ${GITHUB_WORKSPACE}/GameData/RP-0/RP-1.version
