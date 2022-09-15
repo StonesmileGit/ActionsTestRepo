@@ -46,6 +46,12 @@ jobs:
           echo "Version string: $TAG_STRING"
           echo "Version is $VMAJOR dot $VMINOR dot $VPATCH dot $VBUILD"
 
+      - name: Update AssemblyInfo
+        uses: KSP-RO/BuildTools/update-assembly-info@master
+        with:
+          path: ${GITHUB_WORKSPACE}/source/ContractConfigurator/Properties/AssemblyInfo.cs
+          tag: ${{ github.event.release.tag_name }}
+
       - name: Update changelog file
         uses: KSP-RO/BuildTools/process-changelog@master
         with:
