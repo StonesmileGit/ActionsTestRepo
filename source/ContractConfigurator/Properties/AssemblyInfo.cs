@@ -1,3 +1,4 @@
+#define CIBUILD_disabled
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
@@ -36,8 +37,9 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyVersion("1.0")]
 #if CIBUILD
 [assembly: AssemblyFileVersion("@MAJOR@.@MINOR@.@PATCH@.@BUILD@")]
+[assembly: AssemblyInformationalVersion("@MAJOR@.@MINOR@.@PATCH@.@BUILD@ KSP-RO")]
 #else
 [assembly: AssemblyFileVersion("2.1.4")]
-#endif
 [assembly: AssemblyInformationalVersion("2.1.4 KSP-RO")]
+#endif
 [assembly: KSPAssembly("ContractConfigurator", 2, 1)]
