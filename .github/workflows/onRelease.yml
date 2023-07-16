@@ -53,7 +53,7 @@ jobs:
           tag: ${{ github.event.release.tag_name }}
 
       - name: Update changelog file
-        uses: KSP-RO/BuildTools/process-changelog@master
+        uses: KSP-RO/BuildTools/process-changelog@subst_quites
         with:
           tag: ${{ github.event.release.tag_name }}
           body: "${{ github.event.release.body }}"
